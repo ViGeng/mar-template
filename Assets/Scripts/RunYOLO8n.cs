@@ -50,6 +50,14 @@ public class RunYOLO8n : MonoBehaviour
     private const int numClasses = 80;
 
     private VideoPlayer video;
+    private WebCamTexture webcamTexture;
+    public enum InputSourceType
+    {
+        Camera,
+        Video
+    }
+    [SerializeField]
+    public InputSourceType inputSourceType = InputSourceType.Video;
 
     List<GameObject> boxPool = new List<GameObject>();
 
@@ -68,7 +76,7 @@ public class RunYOLO8n : MonoBehaviour
         public float width;
         public float height;
         public string label;
-    }
+    };
 
     
     void Start()
@@ -83,7 +91,7 @@ public class RunYOLO8n : MonoBehaviour
 
         LoadModel();
 
-        targetRT = new RenderTexture(imageWidth, imageHeight, 0);
+        targetRT = new RenderTexture(imageWidth, imageHeight, 0, RenderTextureFormat.ARGBFloat);
 
         //Create image to display video
         displayLocation = displayImage.transform;
@@ -91,7 +99,7 @@ public class RunYOLO8n : MonoBehaviour
         //Create engine to run model
         engine = WorkerFactory.CreateWorker(backend, model);
 
-        SetupInput();
+        SetupInputSource();
     }
 
     void LoadModel()
@@ -133,16 +141,38 @@ public class RunYOLO8n : MonoBehaviour
         model.AddOutput("NMS");
     }
 
-    void SetupInput()
+    void SetupInputSource()
     {
-        video = gameObject.AddComponent<VideoPlayer>();
-        video.renderMode = VideoRenderMode.APIOnly;
-        video.source = VideoSource.Url;
-        video.url = Application.streamingAssetsPath + "/" + videoName;
-        video.isLooping = true;
-        video.Play();
-    }
+        Debug.Log("Setting up input source");
+        if (inputSourceType == InputSourceType.Video)
+        {
+            video = gameObject.AddComponent<VideoPlayer>();
+            video.renderMode = VideoRenderMode.APIOnly;
+            video.source = VideoSource.Url;
+            video.url = Application.streamingAssetsPath + "/" + videoName;
+            video.isLooping = true;
+            video.Play();
+        }
 
+        if (inputSourceType == InputSourceType.Camera)
+        {
+            // check if there is a camera available
+            WebCamDevice[] devices = WebCamTexture.devices;
+            if (devices.Length == 0)
+            {
+                Debug.Log("No camera detected");
+                return;
+            }
+            Debug.Log("Camera detected:" + devices[0].name);
+        
+            // with a camera available, we can set up the webcam texture
+            WebCamTexture webcamTexture = new WebCamTexture(devices[0].name, imageWidth, imageHeight);
+            Debug.Log("Webcam texture requested: texture width: " + webcamTexture.requestedWidth + " height: " + webcamTexture.requestedHeight);
+            displayImage.texture = webcamTexture;
+            webcamTexture.Play();
+        }
+    }
+    
     private void Update()
     {
         ExecuteML();
@@ -152,19 +182,35 @@ public class RunYOLO8n : MonoBehaviour
             Application.Quit();
         }
     }
+    
+    bool render()
+    {
+        float aspect;
+        Texture texture = null;
+        switch (inputSourceType)    
+        {
+            case InputSourceType.Camera:
+                if (!webcamTexture)
+                    return false;
+                texture = webcamTexture;
+                break;
+            case InputSourceType.Video:
+                if (!(video && video.texture))
+                    return false;
+                texture = video.texture;
+                break;
+        }
+        aspect = texture.width * 1f / texture.height;
+        Graphics.Blit(texture, targetRT, new Vector2(1f / aspect, 1), new Vector2(0, 0));
+        displayImage.texture = targetRT;
+        return true;
+    }
 
     public void ExecuteML()
     {
         ClearAnnotations();
-
-        if (video && video.texture)
-        {
-            float aspect = video.width * 1f / video.height;
-            Graphics.Blit(video.texture, targetRT, new Vector2(1f / aspect, 1), new Vector2(0, 0));
-            displayImage.texture = targetRT;
-        }
-        else return;
-
+        render();
+        
         using var input = TextureConverter.ToTensor(targetRT, imageWidth, imageHeight, 3);
         engine.Execute(input);
 
@@ -185,10 +231,12 @@ public class RunYOLO8n : MonoBehaviour
 
         float scaleX = displayWidth / imageWidth;
         float scaleY = displayHeight / imageHeight;
-
+        
+        Debug.Log("Output.shape: " + output.shape.ToString());
         //Draw the bounding boxes
         for (int n = 0; n < output.shape[1]; n++)
         {
+            Debug.Log("Box: " + n);
             var box = new BoundingBox
             {
                 centerX = output[0, n, 0] * scaleX - displayWidth / 2,
@@ -197,6 +245,7 @@ public class RunYOLO8n : MonoBehaviour
                 height = output[0, n, 3] * scaleY,
                 label = labels[labelIDs[0, 0,n]],
             };
+            Debug.Log("BBox: " + box.centerX + " " + box.centerY + " " + box.width + " " + box.height + " " + box.label);
             DrawBox(box, n);
         }
     }
