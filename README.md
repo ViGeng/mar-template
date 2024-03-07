@@ -34,3 +34,7 @@ By running a lower frequency as the refresh rate, we avoid the phone to overheat
 ## Video Tutorial
 
 [![IMAGE ALT TEXT HERE](../Documentation/video-image.png)](https://youtu.be/xpp2f6ITvvE)
+
+## Misc
+
+- **.meta files**: meta files dipicting the asset import settings, resource references, and other information about the asset. They are used by Unity to reference the asset and its properties. They are not required to run the project, but are useful to keep track of the assets and their settings. **so please do include them in your commits.**
