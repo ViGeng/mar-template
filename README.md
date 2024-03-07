@@ -1,6 +1,11 @@
 # Mobile Augmented Reality Template
 
 This is a template for a mobile AR experience. It is forked from [Depth Estimation Sample](https://github.com/Unity-Technologies/sentis-samples/tree/main/DepthEstimationSample).
+
+Scenes:
+ - CameraBackground: Realtime camera feed shown on the screen.
+ - PhoneDemo: Realtime per pixel image to depth estimation.
+ - Detection: Detection of video feed.
  
 Realtime per pixel image to depth estimation.
 
