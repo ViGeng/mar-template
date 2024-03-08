@@ -8,6 +8,7 @@
 
 ## Roadmap
 
+- [ ] A demo scene locally detecting objects using camera feed
 - [ ] save video feed to disk
 - [x] webRTC streaming to server
     - [x] unity streaming client (broadcast)
