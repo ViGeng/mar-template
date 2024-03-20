@@ -8,13 +8,14 @@
 
 ## Roadmap
 
-- [ ] A demo scene locally detecting objects using camera feed
+- [x] A demo scene locally detecting objects using camera feed (base on FaceDetection)
 - [ ] save video feed to disk
 - [x] webRTC streaming to server
     - [x] unity streaming client (broadcast)
     - [ ] edge server receive stream and processing
     - [ ] streaming result back to client
 - [x] WebCamera/Video face/object detection
+- [ ] speech to text demo
 
 ## Requirements
 
