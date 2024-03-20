@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/PhoneDemo.unity
+    path: Assets/Scenes/DepthEstimationCamera.unity
     guid: 718cf4c52bcc7034da28d80d46afe637
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: d2e5374ada18b204da41697973bf4723, type: 2}
