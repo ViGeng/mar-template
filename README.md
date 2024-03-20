@@ -6,10 +6,14 @@
 * [Unity Huggingface](https://huggingface.co/unity)
 * [Unity Render Streaming](https://docs.unity3d.com/Packages/com.unity.renderstreaming@3.1/manual/index.html)
 
+some refs:
+* [rtp streaming](https://blog.csdn.net/qq_44983147/article/details/124276256)
+
 ## Roadmap
 
 - [x] A demo scene locally detecting objects using camera feed (base on FaceDetection)
-- [ ] save video feed to disk
+  - [ ] detection scene organization
+  - [ ] save video feed to disk
 - [x] webRTC streaming to server
     - [x] unity streaming client (broadcast)
     - [ ] edge server receive stream and processing

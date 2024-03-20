@@ -369,11 +369,12 @@ public class RunCameraDet : MonoBehaviour
         boxPool.Add(panel);
         return panel;
     }
+
     public void ClearAnnotations()
     {
-        foreach (Transform child in previewUI.transform)
+        foreach(var box in boxPool)
         {
-            Destroy(child.gameObject);
+            box.SetActive(false);
         }
     }
 
