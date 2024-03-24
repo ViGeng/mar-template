@@ -21,6 +21,7 @@ some refs:
     - [ ] streaming result back to client
 - [x] WebCamera/Video face/object detection
 - [ ] speech to text scene demo
+- [ ] multi-user AR scene (with Detection and Speech to Text)
 - [ ] add docs for each scene
 
 ## Requirements
